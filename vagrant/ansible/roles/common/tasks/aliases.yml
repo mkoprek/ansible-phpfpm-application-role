@@ -1,0 +1,10 @@
+---
+- name: Create alias file
+  template:
+    src: "aliases.j2"
+    dest: "/home/vagrant/.aliases"
+
+- name: Update bashrc for aliases
+  lineinfile:
+    dest="/home/vagrant/.bashrc"
+    line="source ~/.aliases"

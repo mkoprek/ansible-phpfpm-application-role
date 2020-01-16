@@ -1,0 +1,61 @@
+---
+- name: Install sury dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - lsb-release
+
+- name: Install GPG key
+  apt_key:
+    url: "{{ sury.gpg_key_url }}"
+    state: present
+
+- name: Add APT repository
+  apt_repository:
+    repo: "deb {{ sury.apt_url }} {{ ansible_distribution_release }} main"
+    filename: "php_sury_package"
+
+- name: Install PHP required packages
+  apt:
+    name: "{{ php.packages }}"
+    state: present
+
+- name: Remove default PHP pool config
+  file:
+    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    state: absent
+
+- name: Make PHP pool config
+  template:
+    src: "php.www.pool.conf.j2"
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ domain_name }}.conf"
+
+- name: Add path to cURL ini
+  lineinfile:
+    dest: /etc/php/7.4/fpm/conf.d/20-curl.ini
+    regexp: '^curl.cainfo'
+    line: 'curl.cainfo="/etc/ssl/certs/cacert.pem"'
+
+- name: Setup timezone for CLI
+  lineinfile:
+    dest: /etc/php/7.4/cli/php.ini
+    regexp: '^;date.timezone='
+    line: date.timezone = UTC
+
+- name: Setup timezone for FPM
+  lineinfile:
+    dest: /etc/php/7.4/fpm/php.ini
+    regexp: '^;date.timezone='
+    line: date.timezone = UTC
+
+- name: xDebug configuration
+  template:
+      src: "php.xdebug.ini.j2"
+      dest: "/etc/php/{{ php_version }}/fpm/conf.d/20-xdebug.ini"
+
+- name: restart php-fpm
+  command: echo "restart php-fpm"
+  notify: "restart php-fpm"

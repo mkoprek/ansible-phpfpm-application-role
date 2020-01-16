@@ -1,0 +1,3 @@
+---
+- name: restart neo4j
+  service: name=neo4j enabled=yes state=restarted

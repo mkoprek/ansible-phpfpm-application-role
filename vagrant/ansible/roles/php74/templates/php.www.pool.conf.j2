@@ -1,0 +1,17 @@
+; Start a new pool named 'www'.
+; the variable $pool can be used in any directive and will be replaced by the
+; pool name ('www' here)
+[www]
+
+listen.owner = www-data
+listen.group = www-data
+
+user = www-data
+group = www-data
+listen = {{ php.fpm_listen_addr }}
+
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3

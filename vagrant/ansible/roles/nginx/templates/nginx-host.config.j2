@@ -1,0 +1,31 @@
+server {
+    server_name {{ domain_name }};
+    root {{ nginx.root }}/public;
+    index index.php;
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    # DEV
+    # This rule should only be placed on your development environment
+    # In production, don't include this and don't deploy app_dev.php or config.php
+    location ~* \.php$ {
+        fastcgi_pass {{ php.fpm_listen_addr }};
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param APP_ENV vagrant;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        internal;
+    }
+
+    # return 404 for all other php files not matching the front controller
+    # this prevents access to other php files you don't want to be accessible.
+    location ~ \.php$ {
+        return 404;
+    }
+
+    error_log /vagrant/logs/{{ domain_name }}-error.log;
+    access_log /vagrant/logs/{{ domain_name }}-access.log;
+}
+

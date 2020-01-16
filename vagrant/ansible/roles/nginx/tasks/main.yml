@@ -1,0 +1,35 @@
+---
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Copy nginx.conf
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/nginx.conf"
+
+- name: Remove the default site
+  file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
+
+- name: Remove the default site
+  file:
+    path: "/etc/nginx/sites-available/default"
+    state: absent
+
+- name: Create nginx configs for every microservice
+  template:
+    src: "nginx-host.config.j2"
+    dest: "/etc/nginx/sites-available/{{ domain_name }}.conf"
+
+- name: Enable services in nginx
+  file:
+    state: link
+    src: "/etc/nginx/sites-available/{{ domain_name }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ domain_name }}.conf"
+
+- name: restart nginx
+  command: echo "restart nginx"
+  notify: "restart nginx"

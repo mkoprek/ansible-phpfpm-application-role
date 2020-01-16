@@ -1,0 +1,5 @@
+alias resphp='sudo service php{{ php.version }}-fpm restart'
+alias sqllogs='tail -f /var/log/mysql/queries-log.log'
+alias sqlslowlog='tail -f /var/log/mysql/slow-queries-log.log'
+alias xdebugon='sudo sed -i -e "s/;\+zend_extension=xdebug.so/zend_extension=xdebug.so/g" /etc/php/{{ php.version }}/mods-available/xdebug.ini && sudo service php{{ php.version }}-fpm restart'
+alias xdebugoff='sudo sed -i -e "s/zend_extension=xdebug.so/;zend_extension=xdebug.so/g" /etc/php/{{ php.version }}/mods-available/xdebug.ini  && sudo service php{{ php.version }}-fpm restart'

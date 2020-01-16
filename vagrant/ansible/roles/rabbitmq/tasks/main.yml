@@ -1,0 +1,13 @@
+---
+- name: Install rabbitMq
+  apt:
+    name: rabbitmq-server
+    state: present
+
+- name: Enable web plugin
+  command: rabbitmq-plugins enable rabbitmq_management
+
+- name: Create RABBIT config
+  template:
+    src: "rabbitmq.config.j2"
+    dest: "/etc/rabbitmq/rabbitmq.config"

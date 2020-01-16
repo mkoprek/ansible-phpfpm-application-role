@@ -1,0 +1,27 @@
+---
+- name: Install common packages
+  apt:
+    name: "{{ common.packages }}"
+    state: present
+
+- name: Get checkouted services
+  find:
+    paths: "/vagrant"
+    file_type: directory
+    use_regex: yes
+    patterns: '.*service$'
+  register: services
+
+- name: Prepare list
+  set_fact:
+    installed_services: "{{ installed_services|default([]) + [ {'name': item.path.split('/').2} ] }}"
+  with_items: "{{ services.files }}"
+
+#- name: Create motd
+#  template:
+#    src: "motd.j2"
+#    dest: "/etc/motd"
+
+#- include: aliases.yml
+#- include: timezone.yml
+#- include: env.yml

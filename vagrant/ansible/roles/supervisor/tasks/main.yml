@@ -1,0 +1,41 @@
+---
+- name: Install supervisor
+  apt:
+    name: supervisor
+    state: present
+
+- name: Check if supervisor.cfg file exists
+  stat:
+    path: "{{ nginx.root }}{{ item.name }}/config/supervisor.cfg"
+  with_items: "{{ installed_services }}"
+  register: supervisor_config_exists
+
+- name: Prepare supervisor configuration
+  shell: test -e config/supervisor.cfg && paste -sd ',\n' config/supervisor.cfg | grep -v "^$"
+  args:
+    chdir: "{{ nginx.root }}{{ item.name }}"
+  register: supervisor_config
+  ignore_errors: yes
+  with_items: "{{ installed_services }}"
+
+- name: Prepare dict for supervisor
+  set_fact:
+    supervisor_cmd: "{{ supervisor_cmd|default([]) + [ supervisor_cmd_node ] }}"
+  with_items:
+    - "{{ supervisor_config.results }}"
+  vars:
+    supervisor_cmd_node:
+      service: "{{ item.item.name }}"
+      supervisor_cmd: "{{ item.stdout.split(',') }}"
+
+- name: Configure supervisor
+  template:
+    src: supervisor.j2
+    dest: "/etc/supervisor/conf.d/{{ item.service }}_consumer.conf"
+  with_items:
+    - "{{ supervisor_cmd }}"
+  when: item.supervisor_cmd.0 | length > 0
+
+- name: restart supervisor
+  command: echo "restart supervisor"
+  notify: "restart supervisor"

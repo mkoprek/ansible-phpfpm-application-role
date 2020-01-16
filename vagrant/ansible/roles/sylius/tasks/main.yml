@@ -1,0 +1,10 @@
+---
+- name: Check bin/console exists
+  stat:
+    path: /vagrant/bin/console
+  register: console_exists
+
+- name: Instal sylius
+  command: "/vagrant/bin/console sylius:install --no-interaction"
+  when: console_exists.stat.exists == True
+

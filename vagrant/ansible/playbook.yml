@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  vars:
+    - php_version: "7.4"
+  vars_files:
+    - vars/all.yml
+  roles:
+    - common
+    - php74
+    - nginx
+    - mysql
+    - composer
+    - sylius

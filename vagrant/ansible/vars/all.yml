@@ -1,0 +1,36 @@
+---
+domain_name: vagrant.loc
+common:
+  packages:
+    - 'pv'
+    - 'nano'
+    - 'htop'
+    - 'git'
+    - 'curl'
+    - 'zip'
+    - 'ntp'
+    - 'supervisor'
+    - 'sendmail-bin'
+sury:
+  gpg_key_url: 'https://packages.sury.org/php/apt.gpg'
+  apt_url: 'https://packages.sury.org/php'
+php:
+  fpm_listen_addr: "127.0.0.1:9000"
+  packages:
+    - "php{{ php_version }}-fpm"
+    - "php{{ php_version }}-cli"
+    - "php{{ php_version }}-dev"
+    - "php{{ php_version }}-mysql"
+    - "php{{ php_version }}-xdebug"
+    - "php{{ php_version }}-xml"
+    - "php{{ php_version }}-intl"
+    - "php{{ php_version }}-curl"
+    - "php{{ php_version }}-bcmath"
+    - "php{{ php_version }}-redis"
+    - "php{{ php_version }}-mbstring"
+    - "php{{ php_version }}-zip"
+    - "php{{ php_version }}-gd"
+neo4j:
+  gpg_key_url: 'https://debian.neo4j.org/neotechnology.gpg.key'
+nginx:
+  root: /vagrant/

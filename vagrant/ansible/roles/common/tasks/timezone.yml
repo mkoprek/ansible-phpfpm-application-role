@@ -1,0 +1,6 @@
+---
+- name: set timezone to Europe/Warsaw
+  timezone:
+    name: Europe/Warsaw
+
+

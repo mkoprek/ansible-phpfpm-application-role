@@ -1,0 +1,12 @@
+{% for supervisor_cmd in item.supervisor_cmd %}
+[program:{{ item.service }}_consumer_{{ 99999999 | random | to_uuid }}]
+
+autostart = true
+autorestart = true
+startretries = -1
+command = /usr/bin/php {{ nginx.root }}{{ item.service }}/bin/console {{ supervisor_cmd }}
+stdout_logfile = /var/www/logs/consumer-out.log
+stderr_logfile = /var/www/logs/consumer-err.log
+user = www-data
+loglevel = warn
+{% endfor %}
